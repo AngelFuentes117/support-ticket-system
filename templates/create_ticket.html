@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Ticket - Sistema de Tickets{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Panel</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('list_tickets') }}">Tickets</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Nuevo Ticket</li>
+            </ol>
+        </nav>
+        <h1 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Crear Nuevo Ticket</h1>
+    </div>
+    <a href="{{ url_for('list_tickets') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Volver a la lista
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-ticket-perforated me-2"></i>Información del Ticket</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('create_ticket') }}" novalidate>
+                    <!-- Título -->
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" 
+                               placeholder="Describe brevemente el problema" required maxlength="200"
+                               value="{{ request.form.titulo if request.method == 'POST' else '' }}">
+                        <div class="form-text">Máximo 200 caracteres. Sé específico para facilitar la búsqueda.</div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="6" required maxlength="5000"
+                                  placeholder="Describe el problema con detalle: qué ocurre, cuándo empezó, qué has intentado, mensajes de error, etc.">{{ request.form.descripcion if request.method == 'POST' else '' }}</textarea>
+                        <div class="form-text">Proporciona la mayor cantidad de detalles posible para una resolución más rápida.</div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Datos del reportador y categorización -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="reporter_name" class="form-label">Tu nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="reporter_name" name="reporter_name" 
+                                   placeholder="Juan Pérez" required maxlength="100"
+                                   value="{{ request.form.reporter_name if request.method == 'POST' else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="categoria" class="form-label">Categoría <span class="text-danger">*</span></label>
+                            <select class="form-select" id="categoria" name="categoria" required>
+                                <option value="">Selecciona una categoría</option>
+                                {% for cat in CATEGORIAS %}
+                                    <option value="{{ cat }}" {% if request.form.categoria == cat %}selected{% endif %}>
+                                        {{ cat }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="prioridad" class="form-label">Prioridad <span class="text-danger">*</span></label>
+                            <select class="form-select" id="prioridad" name="prioridad" required>
+                                <option value="">Selecciona una prioridad</option>
+                                {% for pri in PRIORIDADES %}
+                                    <option value="{{ pri }}" {% if request.form.prioridad == pri %}selected{% endif %}>
+                                        {{ pri }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">
+                                <strong>Alta:</strong> Sistema caído, pérdida de datos, seguridad<br>
+                                <strong>Media:</strong> Funcionalidad degradada, error recurrente<br>
+                                <strong>Baja:</strong> Mejora, consulta, problema menor
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('list_tickets') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle me-1"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-save me-1"></i>Crear Ticket
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Guía rápida -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightbulb me-2"></i>Consejos para un buen reporte</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="bi bi-check-circle text-success me-1"></i>Qué incluir</h6>
+                        <ul class="mb-0 small">
+                            <li>Pasos para reproducir el problema</li>
+                            <li>Mensajes de error exactos</li>
+                            <li>Sistema operativo y versión</li>
+                            <li>Qué has intentado para solucionarlo</li>
+                            <li>Capturas de pantalla (si aplica)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="bi bi-x-circle text-danger me-1"></i>Qué evitar</h6>
+                        <ul class="mb-0 small">
+                            <li>Títulos genéricos ("No funciona")</li>
+                            <li>Descripciones vagas ("Está roto")</li>
+                            <li>Múltiples problemas en un ticket</li>
+                            <li>Información confidencial (contraseñas)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
